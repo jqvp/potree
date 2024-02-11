@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32px"
+   height="32px"
+   id="svg3797"
+   version="1.1"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   sodipodi:docname="fullscreen.svg"
+   inkscape:export-filename="D:\dev\workspaces\potree\develop\resources\icons\focus.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs3799">
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path3832"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="DotL"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="DotL"
+       style="overflow:visible">
+      <path
+         id="path3893"
+         d="M -2.5,-1.0 C -2.5,1.7600000 -4.7400000,4.0 -7.5,4.0 C -10.260000,4.0 -12.5,1.7600000 -12.5,-1.0 C -12.5,-3.7600000 -10.260000,-6.0 -7.5,-6.0 C -4.7400000,-6.0 -2.5,-3.7600000 -2.5,-1.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.8) translate(7.4, 1)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="22.395604"
+     inkscape:cx="-3.8177135"
+     inkscape:cy="14.60108"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     inkscape:window-width="1920"
+     inkscape:window-height="1012"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:pagecheckerboard="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3805" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3802">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 3.3226256,9.6339284 0,-6.3660716 6.3660702,0"
+       id="path4826"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path4826"
+       id="use4839"
+       transform="matrix(0,-1,1,0,0.05476842,32.054764)"
+       width="32"
+       height="32" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use4839"
+       id="use4841"
+       transform="matrix(0,-1,1,0,0.05476842,32.054764)"
+       width="32"
+       height="32" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use4841"
+       id="use4843"
+       transform="matrix(0,-1,1,0,0.05476842,32.054764)"
+       width="32"
+       height="32" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:1.81887758;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 3.3226256,9.6339284 0,-6.3660716 6.3660702,0"
+       id="path4826-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path4826-8"
+       id="use4893"
+       transform="matrix(0,-1,1,0,0.05476842,32.054764)"
+       width="32"
+       height="32" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use4893"
+       id="use4913"
+       transform="matrix(0,-1,1,0,0.05476842,32.054764)"
+       width="32"
+       height="32" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use4913"
+       id="use4915"
+       transform="matrix(0,-1,1,0,0.05476842,32.054764)"
+       width="32"
+       height="32" />
+  </g>
+</svg>

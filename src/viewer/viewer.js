@@ -1169,6 +1169,18 @@ export class Viewer extends EventDispatcher{
 		}
 	};
 
+	toggleFullscreen (e) {
+		if (document.fullscreenElement) {
+			document.exitFullscreen();
+		}
+		else {
+			console.log("nos quedamos");
+			if (document.body.requestFullscreen) {
+				document.body.requestFullscreen({navigationUI: "hide"});
+			}
+		}
+	}
+
 	toggleMap () {
 		// let map = $('#potree_map');
 		// map.toggle(100);
@@ -1177,6 +1189,16 @@ export class Viewer extends EventDispatcher{
 			this.mapView.toggle();
 		}
 	};
+
+	onFullscreenChange () {
+		let imgFullscreenToggle = document.getElementById("potree_fullscreen_toggle");
+		if (document.fullscreenElement) {
+			imgFullscreenToggle.src = new URL(Potree.resourcePath + '/icons/exitFullscreen.svg').href;
+		}
+		else {
+			imgFullscreenToggle.src = new URL(Potree.resourcePath + '/icons/fullscreen.svg').href;
+		}
+	}
 
 	onGUILoaded(callback){
 		if(this.guiLoaded){
@@ -1215,6 +1237,13 @@ export class Viewer extends EventDispatcher{
 			imgMenuToggle.onclick = this.toggleSidebar;
 			imgMenuToggle.classList.add('potree_menu_toggle');
 
+			let imgFullscreenToggle = document.createElement('img');
+			imgFullscreenToggle.src = new URL(Potree.resourcePath + '/icons/fullscreen.svg').href;
+			imgFullscreenToggle.onclick = this.toggleFullscreen;
+			imgFullscreenToggle.id = 'potree_fullscreen_toggle';
+			document.body.onfullscreenchange = this.onFullscreenChange;
+
+
 			let imgMapToggle = document.createElement('img');
 			imgMapToggle.src = new URL(Potree.resourcePath + '/icons/map_icon.png').href;
 			imgMapToggle.style.display = 'none';
@@ -1226,6 +1255,7 @@ export class Viewer extends EventDispatcher{
 			let elButtons = $("#potree_quick_buttons").get(0);
 
 			elButtons.append(imgMenuToggle);
+			elButtons.append(imgFullscreenToggle);
 			elButtons.append(imgMapToggle);
 
 
