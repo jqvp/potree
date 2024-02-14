@@ -887,8 +887,8 @@ export class Viewer extends EventDispatcher{
 		return range;
 	}
 
-	fitToScreen (factor = 1, animationDuration = 0) {
-		let box = this.getBoundingBox(this.scene.pointclouds);
+	fitToScreen (factor = 1, animationDuration = 0, pointcloud = null) {
+		let box = this.getBoundingBox(pointcloud ? [pointcloud] : this.scene.pointclouds);
 
 		let node = new THREE.Object3D();
 		node.boundingBox = box;
@@ -1174,7 +1174,6 @@ export class Viewer extends EventDispatcher{
 			document.exitFullscreen();
 		}
 		else {
-			console.log("nos quedamos");
 			if (document.body.requestFullscreen) {
 				document.body.requestFullscreen({navigationUI: "hide"});
 			}

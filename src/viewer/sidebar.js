@@ -47,6 +47,7 @@ export class Sidebar{
 	init(){
 
 		this.initAccordion();
+		this.initFileMenu();
 		this.initAppearance();
 		this.initToolbar();
 		this.initScene();
@@ -292,6 +293,47 @@ export class Sidebar{
 			let currentShow = this.measuringTool.showLabels ? "SHOW" : "HIDE";
 			elShow.find(`input[value=${currentShow}]`).trigger("click");
 		}
+	}
+
+	initFileMenu() {
+		let elFile = $("#menu_file");
+
+		let opt = elFile.next().find("#optFile");
+
+		fetch(`${Potree.resourcePath}/pointclouds.json`).then(res => res.json().then(data => {
+			for(let option of data){
+				opt.append($(`<option>${option}</option>`));
+			}
+	
+			//TODO rellenar desde JSON
+			opt.selectmenu({
+				change: (event, ui) => {
+					let value = ui.item.value;
+
+					let pcSelected = null;
+					this.viewer.scene.pointclouds.forEach(pc => {
+						pc.visible = false;
+						if (pc.name == value) pcSelected = pc;
+					});
+
+					if (pcSelected) {
+						pcSelected.visible = true;
+						this.viewer.fitToScreen(undefined, undefined, pcSelected);
+						return;
+					}
+					
+					Potree.loadPointCloud(`../pointclouds/${value}/metadata.json`, value, e => {
+						this.viewer.scene.addPointCloud(e.pointcloud);
+						let material = e.pointcloud.material;
+						material.size = 1;
+						material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+						this.viewer.fitToScreen(undefined, undefined, e.pointcloud);
+					});
+				}
+			});
+			opt.selectmenu().val(this.viewer.scene.pointclouds[0].name).selectmenu('refresh');
+		}));
+
 	}
 
 	initScene(){
