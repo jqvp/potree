@@ -310,6 +310,8 @@ export class Sidebar{
 				change: (event, ui) => {
 					let value = ui.item.value;
 
+					if (value === "") return;
+
 					let pcSelected = null;
 					this.viewer.scene.pointclouds.forEach(pc => {
 						pc.visible = false;
@@ -331,7 +333,9 @@ export class Sidebar{
 					});
 				}
 			});
-			opt.selectmenu().val(this.viewer.scene.pointclouds[0].name).selectmenu('refresh');
+
+			//const pcs = this.viewer.scene.pointclouds;
+			//opt.selectmenu().val(pcs[0] ? pcs[0].name : "").selectmenu('refresh');
 		}));
 
 	}
