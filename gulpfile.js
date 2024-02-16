@@ -170,14 +170,6 @@ gulp.task('build',
 
 			gulp.src(paths.resources).pipe(gulp.dest('build/potree/resources'));
 
-			let pointclouds = [];
-			fs.readdirSync("pointclouds").forEach(f => {
-				console.log(f);
-				if (fs.statSync("pointclouds/" + f).isDirectory) pointclouds.push(f);
-			});
-
-			fs.writeFileSync("build/potree/resources/pointclouds.json", JSON.stringify(pointclouds));
-
 			gulp.src(["LICENSE"]).pipe(gulp.dest('build/potree'));
 
 			done();
