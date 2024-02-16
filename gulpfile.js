@@ -196,7 +196,6 @@ gulp.task('watch', gulp.parallel("build", "pack", "webserver", async function() 
 		'resources/**/*',
 		'examples//**/*.json',
 		'!resources/icons/index.html',
-		'pointclouds/**/*',
 	];
 
 	watch(watchlist, gulp.series("build", "pack"));
