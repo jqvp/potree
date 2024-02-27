@@ -121,6 +121,7 @@ export class NodeLoader{
 			let size = box.max.clone().sub(box.min);
 			let max = min.clone().add(size);
 			let numPoints = node.numPoints;
+			console.log(`Node ${node.name} has ${numPoints}`)
 
 			let offset = node.octreeGeometry.loader.offset;
 
