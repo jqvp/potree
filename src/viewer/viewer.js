@@ -127,6 +127,7 @@ export class Viewer extends EventDispatcher{
 
 		this.server = null;
 
+		this.numVisiblePoints = 0;
 		this.fov = 60;
 		this.isFlipYZ = false;
 		this.useDEMCollisions = false;
@@ -1704,6 +1705,10 @@ export class Viewer extends EventDispatcher{
 
 		if (!this.freeze) {
 			let result = Potree.updatePointClouds(scene.pointclouds, camera, this.renderer);
+			if (this.numVisiblePoints != result.numVisiblePoints) {
+				this.numVisiblePoints = result.numVisiblePoints;
+				$( "#num_visible_points" ).text(this.numVisiblePoints.toString() || "0");	
+			}
 
 
 			// DEBUG - ONLY DISPLAY NODES THAT INTERSECT MOUSE
