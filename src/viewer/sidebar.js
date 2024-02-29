@@ -329,6 +329,16 @@ export class Sidebar{
 						let material = e.pointcloud.material;
 						material.size = 1;
 						material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+						e.pointcloud.position.z = 0;
+
+						this.viewer.scene.view.position.set(590093.649, 231823.465, 267.402);
+						this.viewer.scene.view.lookAt(new THREE.Vector3(589837.149, 231438.996, -0.707));
+
+						let pointcloudProjection = e.pointcloud.projection;
+						let mapProjection = proj4.defs("WGS84");
+						window.toMap = proj4(pointcloudProjection, mapProjection);
+						window.toScene = proj4(mapProjection, pointcloudProjection);
+
 						this.viewer.fitToScreen(undefined, undefined, e.pointcloud);
 					});
 				}
