@@ -1,7 +1,7 @@
 
 import * as THREE from "../../../libs/three.js/build/three.module.js";
 import {Utils} from "../../utils.js";
-import {Volume, BoxVolume, SphereVolume} from "../../utils/Volume.js";
+import { BoxVolume, SphereVolume} from "../../utils/Volume.js";
 
 import {MeasurePanel} from "./MeasurePanel.js";
 
@@ -135,6 +135,38 @@ export class VolumePanel extends MeasurePanel{
 					{duration: 3000});
 		});
 
+		if (this.measurement instanceof BoxVolume) {
+			this.requests = [];
+			this.scheduledRecomputeTime = null;
+			this.requestsActivated = false;
+			this.measurement.numPoints = 0;
+
+			let elVolume = this.elContent.find("#measurement_volume");
+			elVolume.after(
+				'<br>',
+				'<span style="font-weight: bold">Points: </span>',
+				'<span id="num_points_volume">-</span>'
+			);
+			this.elPoints = this.elContent.find("#num_points_volume");
+
+			this.elContent.find("#volume_reset_orientation").parent().after(`
+				<li style="display: grid; grid-template-columns: auto auto; grid-column-gap: 5px; margin-top: 10px">
+					<input id="volume_get_points" type="button" value="calculate points"/>
+					<input id="volume_cancel_get" type="button" value="cancel calculation"/>
+				</li>
+			`);
+
+			this.elContent.find("#volume_get_points").click(() => {
+				this.requestsActivated = true;
+				this.resetRequests();
+			});
+	
+			this.elContent.find("#volume_cancel_get").click(() => {
+				this.requestsActivated = false;
+				this.cancelRequests();
+			});
+		}
+
 		this.elRemove = this.elContent.find("img[name=remove]");
 		this.elRemove.click( () => {
 			this.viewer.scene.removeVolume(measurement);
@@ -159,9 +191,9 @@ export class VolumePanel extends MeasurePanel{
 			this.measurement.visible = event.target.checked;
 		});
 
-		this.propertiesPanel.addVolatileListener(measurement, "position_changed", this._update);
-		this.propertiesPanel.addVolatileListener(measurement, "orientation_changed", this._update);
-		this.propertiesPanel.addVolatileListener(measurement, "scale_changed", this._update);
+		this.propertiesPanel.addVolatileListener(measurement, "position_changed", () => {this.resetRequests(); this._update();});
+		this.propertiesPanel.addVolatileListener(measurement, "orientation_changed", () => {this.resetRequests(); this._update();});
+		this.propertiesPanel.addVolatileListener(measurement, "scale_changed", () => {this.resetRequests(); this._update();});
 		this.propertiesPanel.addVolatileListener(measurement, "clip_changed", this._update);
 
 		this.update();
@@ -381,8 +413,50 @@ export class VolumePanel extends MeasurePanel{
 			elVolume.html(Utils.addCommas(volume.toFixed(2)));
 		}
 
+		if (this.measurement instanceof BoxVolume) {
+			this.elPoints.text(this.measurement.numPoints.toString());
+		}
+
 		this.elCheckClip.prop("checked", this.measurement.clip);
 		this.elCheckShow.prop("checked", this.measurement.visible);
 
+	}
+
+	progressHandler (pointcloud, progress) {
+		this.measurement.numPoints += progress.points.numPoints;
+		this.elPoints.text(this.measurement.numPoints.toString());
+	}
+
+	resetRequests () {
+		if (!this.requestsActivated) return; 
+		
+		this.cancelRequests();
+		this.measurement.numPoints = 0;
+
+		if ((this.scheduledRecomputeTime || 0) > new Date().getTime()) {
+			return;
+		} else {
+			this.scheduledRecomputeTime = new Date().getTime() + 100;
+		}
+
+		for (let pointcloud of this.viewer.scene.pointclouds.filter(p => p.visible)) {
+			this.requests.push(pointcloud.getPointsInVolume(this.measurement, null, {
+				'onProgress': (event) => {
+					this.progressHandler(pointcloud, event.points);
+				},
+				'onFinish': (event) => {
+				},
+				'onCancel': () => {
+				}
+			}));
+		}
+	}
+
+	cancelRequests () {
+		for (let request of this.requests) {
+			request.cancel();
+		}
+		
+		this.requests = [];
 	}
 };

@@ -4,6 +4,7 @@ import {PointCloudTree, PointCloudTreeNode} from "./PointCloudTree.js";
 import {PointCloudOctreeGeometryNode} from "./PointCloudOctreeGeometry.js";
 import {Utils} from "./utils.js";
 import {PointCloudMaterial} from "./materials/PointCloudMaterial.js";
+import { PointPickerRequest } from "./utils/PointPickerRequest.js";
 
 
 export class PointCloudOctreeNode extends PointCloudTreeNode {
@@ -153,6 +154,7 @@ export class PointCloudOctree extends PointCloudTree {
 		this.visibleGeometry = [];
 		this.generateDEM = false;
 		this.profileRequests = [];
+		this.pointPickerRequests = [];
 		this.name = '';
 		this._visible = true;
 
@@ -524,6 +526,13 @@ export class PointCloudOctree extends PointCloudTree {
 
 		return tBox;
 	};
+
+	getPointsInVolume(shape, maxDepth, callback) {
+		let request = new PointPickerRequest(this, shape, maxDepth, callback);
+		this.pointPickerRequests.push(request);
+
+		return request;
+	}
 
 	/**
 	 * returns points inside the profile points

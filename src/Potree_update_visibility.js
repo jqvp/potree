@@ -17,6 +17,15 @@ export function updatePointClouds(pointclouds, camera, renderer){
 			}
 		}
 
+		for (let pickerRequest of pointcloud.pointPickerRequests) {
+			pickerRequest.update();
+
+			let duration = performance.now() - start;
+			if(duration > 5){
+				break;
+			}			
+		}
+
 		let duration = performance.now() - start;
 	}
 
