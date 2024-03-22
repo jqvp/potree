@@ -329,6 +329,7 @@ export class Sidebar{
 						let material = e.pointcloud.material;
 						material.size = 1;
 						material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+						material.activeAttributeName = "classification";
 						e.pointcloud.position.z = 0;
 
 						this.viewer.scene.view.position.set(590093.649, 231823.465, 267.402);
