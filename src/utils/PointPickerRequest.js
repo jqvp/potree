@@ -2,6 +2,7 @@
 import * as THREE from "../../libs/three.js/build/three.module.js";
 import {Points} from "../Points.js";
 import { BoxVolume } from "./Volume.js";
+import { PointCloudOctreeGeometryNode } from "../PointCloudOctreeGeometry.js";
 
 /**
  * Progressively gets points from a pointcloud according to its intersection  
@@ -17,18 +18,27 @@ export class PointPickerRequest {
      * @param {BoxVolume} shape The shape that will be used to calculate the intersection
      * @param {Number} maxDepth Maximum depth the object will search in the 
      * pointcloud
-     * @param {{onProgress: ({}) => void, onFinish: ({}) => void, onCancel: ({}) => void}
-     * } callback Object containing callback functions
+     * @param {{
+	 * 		onProgress: (e : {
+	 * 			request: PointPickerRequest,
+	 * 			points: {size: Number, points: Points}
+	 * 		}) => void, 
+	 * 		onFinish: (e : { request: PointPickerRequest }) => void, 
+	 * 		onCancel: () => void,
+	 * 		onAcceptedPoints: (
+	 * 			node: PointCloudOctreeGeometryNode,
+	* 			acceptedIndices: Uint32Array
+	* 			acceptedXYZ: Float32Array
+	* 		) => {}}
+     * } callback Object containing callback functions:  
+	 * onAcceptedPoint: Each time a point is in 
      */
 	constructor (pointcloud, shape, maxDepth, callback) {
 		this.pointcloud = pointcloud;
 		this.shape = shape;
 		this.maxDepth = maxDepth || Number.MAX_VALUE;
 		this.callback = callback;
-		/**
-		 * @type {{size: Number, points: Points}}
-		 */
-		this.temporaryResult = {size: 0, points: new Points()};
+		this.temporaryResult = new Points();
 		this.pointsServed = 0;
 		this.highestLevelServed = 0;
 
@@ -127,20 +137,20 @@ export class PointPickerRequest {
 					yield false;
 				}
 			}
-			if (this.temporaryResult.size > 100) {//TODO
-				this.pointsServed += this.temporaryResult.size;
+			if (this.temporaryResult.numPoints > 100) {//TODO
+				this.pointsServed += this.temporaryResult.numPoints;
 				this.callback.onProgress({request: this, points: this.temporaryResult});
-				this.temporaryResult = {size: 0, points: new Points()};
+				this.temporaryResult = new Points();
 			}
 		}
 
 		if (this.priorityQueue.size === 0) {//TODO
 			// we're done! inform callback and remove from pending requests
 
-			if (this.temporaryResult.size > 0) {
-				this.pointsServed += this.temporaryResult.size;
+			if (this.temporaryResult.numPoints > 0) {
+				this.pointsServed += this.temporaryResult.numPoints;
 				this.callback.onProgress({request: this, points: this.temporaryResult});
-				this.temporaryResult = {size: 0, points: new Points()};
+				this.temporaryResult = new Points();
 			}
 
 			this.callback.onFinish({request: this});
@@ -175,7 +185,7 @@ export class PointPickerRequest {
 
 			pos.applyMatrix4(matrix);
 			let diff = new THREE.Vector3().subVectors(pos, center)
-			.applyQuaternion(this.shape.quaternion.conjugate());
+			.applyQuaternion(this.shape.quaternion.clone().conjugate());
 
 			if (Math.abs(diff.x) < this.shape.scale.x/2
 			 && Math.abs(diff.y) < this.shape.scale.y/2
@@ -211,7 +221,7 @@ export class PointPickerRequest {
 	/**
 	 * 
 	 * @param {PointCloudOctreeGeometryNode} nodes 
-	 * @param {{size: Number, points: Points}} target 
+	 * @param {Points} target 
 	 */
 	* getPointsInsideShape(nodes, target){
 		let checkpoint = performance.now();
@@ -246,6 +256,8 @@ export class PointPickerRequest {
 					[accepted, acceptedPositions] = result;
 				}
 			}
+
+			if (accepted.length > 0) this.callback.onAcceptedPoints(node, accepted, acceptedPositions);
 
 			let duration = performance.now() - checkpoint;
 			if(duration > 4){
@@ -285,8 +297,7 @@ export class PointPickerRequest {
 
 			points.numPoints = accepted.length;
 
-			target.points.add(points);
-			target.size += points.numPoints;
+			target.add(points);
 		}
 
 		yield true;
@@ -310,7 +321,7 @@ export class PointPickerRequest {
 		const diff = new THREE.Line3(start, end)
 			.applyMatrix4(shape.matrixWorld)
 			.closestPointToPoint(bsWorld.center, true, new THREE.Vector3())
-			.sub(bsWorld.center).applyQuaternion(shape.quaternion.conjugate());
+			.sub(bsWorld.center).applyQuaternion(shape.quaternion.clone().conjugate());
 
 		return (Math.abs(diff.y) < (bsWorld.radius + shape.scale.y/2))
 			&& (Math.abs(diff.z) < (bsWorld.radius + shape.scale.z/2))

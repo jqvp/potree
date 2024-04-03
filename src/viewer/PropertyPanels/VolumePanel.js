@@ -1,7 +1,8 @@
 
 import * as THREE from "../../../libs/three.js/build/three.module.js";
+import { PointCloudOctreeGeometryNode } from "../../PointCloudOctreeGeometry.js";
 import {Utils} from "../../utils.js";
-import { BoxVolume, SphereVolume} from "../../utils/Volume.js";
+import { BoxVolume, SphereVolume} from "../../utils/Volume.js";+
 
 import {MeasurePanel} from "./MeasurePanel.js";
 
@@ -140,14 +141,54 @@ export class VolumePanel extends MeasurePanel{
 			this.scheduledRecomputeTime = null;
 			this.requestsActivated = false;
 			this.measurement.numPoints = 0;
+			this.filter = -1;
+			this.toClassNumber = 0;
 
-			let elVolume = this.elContent.find("#measurement_volume");
-			elVolume.after(
-				'<br>',
-				'<span style="font-weight: bold">Points: </span>',
-				'<span id="num_points_volume">-</span>'
-			);
-			this.elPoints = this.elContent.find("#num_points_volume");
+			if (this.viewer.scene.pointclouds[0]) {
+				let elVolume = this.elContent.find("#measurement_volume");
+				elVolume.after(`
+					<br>
+					<span style="font-weight: bold">Points: </span>
+					<span id="num_points_volume">-</span>
+				`);
+				this.elPoints = this.elContent.find("#num_points_volume");
+				this.elPoints.after(`
+					<div class="divider">
+						<span>Cambio de clasificación</span>
+					</div>
+					<span style="font-weight: bold">Filtro:</span>
+					<li>
+						<select id="optClassFilter" name="optClassFilter"></select>
+					</li>
+					<span style="font-weight: bold">Cambiar a:</span>
+					<li>
+						<select id="optToClass" name="optToClass"></select>
+					</li>
+				`);
+
+				let filterSelect = this.elContent.find('#optClassFilter');
+				let toClassSelect = this.elContent.find('#optToClass');
+				const classifications = this.viewer.scene.pointclouds[0].material.classification;
+				const options = Object.keys(classifications);
+
+				options.forEach(a => {
+					let elOption = $(`<option value=${a}>${classifications[a].name}</option>`);
+					filterSelect.append($(`<option value=${a}>${classifications[a].name}</option>`));
+					toClassSelect.append(elOption);
+				});
+				filterSelect.append($(`<option value=-1>No filter</option>`));
+				filterSelect.val("No filter");
+				toClassSelect.val("");
+
+				filterSelect.selectmenu({change: (event, ui) => {
+					console.log(event, ui);
+
+					this.filter = parseInt(ui.item.value);
+				}});
+				toClassSelect.selectmenu({change: (event, ui) => {
+					this.toClassNumber = parseInt(ui.item.value);
+				}});
+			}
 
 			this.elContent.find("#volume_reset_orientation").parent().after(`
 				<li style="display: grid; grid-template-columns: auto auto; grid-column-gap: 5px; margin-top: 10px">
@@ -422,8 +463,8 @@ export class VolumePanel extends MeasurePanel{
 
 	}
 
-	progressHandler (pointcloud, progress) {
-		this.measurement.numPoints += progress.points.numPoints;
+	progressHandler (pointcloud, event) {
+		this.measurement.numPoints += event.numPoints;
 		this.elPoints.text(this.measurement.numPoints.toString());
 	}
 
@@ -447,6 +488,41 @@ export class VolumePanel extends MeasurePanel{
 				'onFinish': (event) => {
 				},
 				'onCancel': () => {
+				},
+				/**
+				 * @param {PointCloudOctreeGeometryNode} node
+				 * @param {Uint32Array} acceptedIndices
+				 * @param {Float32Array} acceptedXYZ
+				 */
+				'onAcceptedPoints': (node, acceptedIndices, acceptedXYZ) => {
+					console.log(node, acceptedIndices);
+					let arrClass = node.geometry.attributes['classification'].array;
+					const filteredIndices = this.filter === -1 ? acceptedIndices
+						: acceptedIndices.filter((v) => arrClass[v] === this.filter);
+
+					for (const i of filteredIndices) arrClass[i] = this.toClassNumber;
+					node.geometry.attributes['classification'].needsUpdate = true;
+					
+					// THE FOLLOWING ONLY WORKS WITHOUT COMPRESSION
+					if (node.octreeGeometry.loader.metadata.encoding === "BROTLI") {
+						throw new Error("The pointcloud patching functionality only works for uncompressed pointclouds.");
+					}
+
+					fetch(node.octreeGeometry.url.slice(0, -"metadata.json".length-1), {
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						method: "PATCH",
+						body: JSON.stringify({
+							indices: Array.from(filteredIndices),
+							classification: this.toClassNumber,
+							byteOffset: node.byteOffset.toString()
+						}),
+					}).then(res => {
+						console.log(res);
+					}).catch(err => {
+						console.error(err);
+					});
 				}
 			}));
 		}
