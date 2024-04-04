@@ -148,7 +148,7 @@ export class VolumePanel extends MeasurePanel{
 				let elVolume = this.elContent.find("#measurement_volume");
 				elVolume.after(`
 					<br>
-					<span style="font-weight: bold">Points: </span>
+					<span style="font-weight: bold">Puntos: </span>
 					<span id="num_points_volume">-</span>
 				`);
 				this.elPoints = this.elContent.find("#num_points_volume");
@@ -192,8 +192,8 @@ export class VolumePanel extends MeasurePanel{
 
 			this.elContent.find("#volume_reset_orientation").parent().after(`
 				<li style="display: grid; grid-template-columns: auto auto; grid-column-gap: 5px; margin-top: 10px">
-					<input id="volume_get_points" type="button" value="calculate points"/>
-					<input id="volume_cancel_get" type="button" value="cancel calculation"/>
+					<input id="volume_get_points" type="button" value="Remplazar clasificación"/>
+					<input id="volume_cancel_get" type="button" value="Cancelar proceso"/>
 				</li>
 			`);
 
@@ -232,9 +232,9 @@ export class VolumePanel extends MeasurePanel{
 			this.measurement.visible = event.target.checked;
 		});
 
-		this.propertiesPanel.addVolatileListener(measurement, "position_changed", () => {this.resetRequests(); this._update();});
-		this.propertiesPanel.addVolatileListener(measurement, "orientation_changed", () => {this.resetRequests(); this._update();});
-		this.propertiesPanel.addVolatileListener(measurement, "scale_changed", () => {this.resetRequests(); this._update();});
+		this.propertiesPanel.addVolatileListener(measurement, "position_changed", () => this._update);
+		this.propertiesPanel.addVolatileListener(measurement, "orientation_changed", () => this._update);
+		this.propertiesPanel.addVolatileListener(measurement, "scale_changed", () => this._update);
 		this.propertiesPanel.addVolatileListener(measurement, "clip_changed", this._update);
 
 		this.update();
