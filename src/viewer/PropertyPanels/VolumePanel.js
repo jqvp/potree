@@ -139,7 +139,6 @@ export class VolumePanel extends MeasurePanel{
 		if (this.measurement instanceof BoxVolume) {
 			this.requests = [];
 			this.scheduledRecomputeTime = null;
-			this.requestsActivated = false;
 			this.measurement.numPoints = 0;
 			this.filter = -1;
 			this.toClassNumber = 0;
@@ -198,12 +197,10 @@ export class VolumePanel extends MeasurePanel{
 			`);
 
 			this.elContent.find("#volume_get_points").click(() => {
-				this.requestsActivated = true;
 				this.resetRequests();
 			});
 	
 			this.elContent.find("#volume_cancel_get").click(() => {
-				this.requestsActivated = false;
 				this.cancelRequests();
 			});
 		}
@@ -468,9 +465,7 @@ export class VolumePanel extends MeasurePanel{
 		this.elPoints.text(this.measurement.numPoints.toString());
 	}
 
-	resetRequests () {
-		if (!this.requestsActivated) return; 
-		
+	resetRequests () {		
 		this.cancelRequests();
 		this.measurement.numPoints = 0;
 
