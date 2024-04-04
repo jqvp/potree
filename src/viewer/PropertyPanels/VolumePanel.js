@@ -2,7 +2,7 @@
 import * as THREE from "../../../libs/three.js/build/three.module.js";
 import { PointCloudOctreeGeometryNode } from "../../PointCloudOctreeGeometry.js";
 import {Utils} from "../../utils.js";
-import { BoxVolume, SphereVolume} from "../../utils/Volume.js";+
+import { BoxVolume, SphereVolume} from "../../utils/Volume.js";
 
 import {MeasurePanel} from "./MeasurePanel.js";
 
